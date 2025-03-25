@@ -1,0 +1,190 @@
+{% extends 'base/_base.html' %} 
+{% load static %} 
+
+{% block title %}pesquisa{% endblock title %}
+
+{% block content %}
+<!-- Product -->
+<div class="bg0 m-t-23 p-b-140">
+    <div class="container">
+        <div class="flex-w flex-sb-m p-b-52">
+            <div class="flex-w flex-l-m filter-tope-group m-tb-10">
+                {% for categoria in categorias %}
+                    <a 
+                        href="?categoria={{ categoria.id }}"
+                        class="{% if categoria_id == categoria.id %} text-red {% endif %} stext-106 cl6 hov1 bor3 trans-04 m-r-32 m-tb-5 how-active1"
+                        data-filter="*"
+                    >
+                    {{ categoria.nome }}
+                    </a>
+                {% endfor %}
+            </div>
+
+            <div class="flex-w flex-c-m m-tb-10">
+                <div
+                    class="flex-c-m stext-106 cl6 size-104 bor4 pointer hov-btn3 trans-04 m-r-8 m-tb-4 js-show-filter"
+                >
+                    <i
+                        class="icon-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-filter-list"
+                    ></i>
+                    <i
+                        class="icon-close-filter cl2 m-r-6 fs-15 trans-04 zmdi zmdi-close dis-none"
+                    ></i>
+                    Filtrar
+                </div>
+            </div>
+
+            <!-- Filter -->
+            <div class="dis-none panel-filter w-full p-t-10">
+                <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+                    <div class="filter-col1 p-r-15 p-b-27">
+                        <div class="mtext-102 cl2 p-b-15">Ordenar por</div>
+                        <ul>
+                            <li class="p-b-6">
+                                <a href="?sort=default" class="{% if sort == "default" %}text-red{% endif %} filter-link stext-106 trans-04">Padrão</a>
+                            </li>
+                            <li class="p-b-6">
+                                <a href="?sort=preco_asc" class="{% if sort == "preco_asc" %}text-red{% endif %} filter-link stext-106 trans-04">Preço: Menor ao Maior</a>
+                            </li>
+                            <li class="p-b-6">
+                                <a href="?sort=preco_desc" class="{% if sort == "preco_desc" %}text-red{% endif %} filter-link stext-106 trans-04">Preço: Maior ao Menor</a>
+                            </li>
+                            
+                        </ul>
+                    </div>
+            
+                    <div class="filter-col2 p-r-15 p-b-27">
+                        <div class="mtext-102 cl2 p-b-15">Preço</div>
+                        <ul>
+                            <li class="p-b-6">
+                                <a href="?preco_min=0&preco_max=50" class="{% if preco_min == "0" %}text-red{% endif %} filter-link stext-106 trans-04">R$0 - R$50</a>
+                            </li>
+                            <li class="p-b-6">
+                                <a href="?preco_min=50&preco_max=100" class="{% if preco_min == "50" %}text-red{% endif %} filter-link stext-106 trans-04">R$50 - R$100</a>
+                            </li>
+                            <li class="p-b-6">
+                                <a href="?preco_min=100&preco_max=150" class="{% if preco_min == "100" %}text-red{% endif %} filter-link stext-106 trans-04">R$100 - R$150</a>
+                            </li>
+                        </ul>
+                    </div>
+            
+                    <div class="filter-col3 p-r-15 p-b-27">
+                        <div class="mtext-102 cl2 p-b-15">Categorias</div>
+                        <ul>
+                            {% for categoria in categorias %}
+                                <li class="p-b-6">
+                                    <a href="?categoria={{ categoria.id }}" class="{% if categoria_id == categoria.id %}text-red{% endif %} filter-link stext-106 trans-04">{{ categoria.nome }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+            
+                    <div class="filter-col4 p-b-27">
+                        <div class="mtext-102 cl2 p-b-15">Tamanhos</div>
+                        <ul>
+                            {% for tamanho in tamanhos %}
+                                <li class="p-b-6">
+                                    <a href="?tamanho={{ tamanho.id }}" class="{% if tamanho_id == tamanho.id %}text-red{% endif %} filter-link stext-106 trans-04">{{ tamanho.tamanho }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div
+            class="isotope-grid row"
+        >
+            {% for produto in produtos %}
+            <a
+                                href="{% url "detalhes_produto" produto.id %}">
+                <div
+                    class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women"
+                >
+                    <!-- Block2 -->
+                    <div class="block2 d-flex flex-column">
+                        <div class="block2-pic hov-img0 imagem-container-pesquisa">
+                            {% if produto.imagem %}
+                                <img
+                                    src="{{ produto.imagem.url }}"
+                                    alt="{{ produto.nome }}"
+                                />
+                            {% else %}
+                                <img
+                                    src="{% static "images/no-image.png" %}"
+                                    alt="{{ produto.nome }}"
+                                />
+                            {% endif %}
+                            <a
+                                href="{% url "detalhes_produto" produto.id %}"
+                                class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04"
+                            >
+                                Ver detalhes
+                            </a>
+                        </div>
+
+                        <div class="block2-txt flex-w flex-t p-t-14">
+                            <div class="block2-txt-child1 flex-col-l">
+                                <a
+                                    href="{% url "detalhes_produto" produto.id %}"
+                                    class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6"
+                                >
+                                    {{ produto.nome }}
+                                </a>
+                                
+                                {% comment %} <a href="{% url "add_carrinho" produto.id %}">
+                                    <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11">
+                                        <i class="zmdi zmdi-shopping-cart"></i>
+                                    </div>
+                                </a> {% endcomment %}
+
+                                <span class="stext-105 cl3"> {{ produto.preco }} </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <h2 class="stext-106">Nenhum produto encontrado!</h2>
+            {% endfor %}
+            </a>
+        </div>
+        
+
+        <!-- Paginação -->
+         
+        <div class="pagination row">
+            <div class="pagination-links flex-c-m flex-w w-full p-t-45">
+                <div class="pagination-link flex-c-m stext-101 cl5 size-103 bg2 bor1 p-lr-15 trans-04">
+                    {% if produtos.has_previous %}
+                        <a class="hov-btn1 bg2 bor1 p-lr-15 text-decoration-none" href="?page=1{% if q %}&pesquisa={{ pesquisa }}{% endif %}{% if preco_min %}&preco_min={{ preco_min }}{% endif %}{% if preco_max %}&preco_max={{ preco_max }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}{% if tamanho_id %}&tamanho={{ tamanho_id }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">&laquo; Primeiro</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        | 
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="hov-btn1 bg2 bor1 p-lr-15 text-decoration-none" href="?page={{ produtos.previous_page_number }}{% if pesquisa %}&pesquisa={{ pesquisa }}{% endif %}{% if preco_min %}&preco_min={{ preco_min }}{% endif %}{% if preco_max %}&preco_max={{ preco_max }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}{% if tamanho_id %}&tamanho={{ tamanho_id }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">Anterior</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        |
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                    {% endif %}
+            
+                    <span class="current">
+                        Página {{ produtos.number }} de {{ produtos.paginator.num_pages }}.
+                    </span>
+            
+                    {% if produtos.has_next %}
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        |
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="hov-btn1 bg2 bor1 p-lr-15 text-decoration-none" href="?page={{ produtos.next_page_number }}{% if pesquisa %}&pesquisa={{ pesquisa }}{% endif %}{% if preco_min %}&preco_min={{ preco_min }}{% endif %}{% if preco_max %}&preco_max={{ preco_max }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}{% if tamanho_id %}&tamanho={{ tamanho_id }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">Próxima</a>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        |
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="hov-btn1 bg2 bor1 p-lr-15 text-decoration-none" href="?page={{ produtos.paginator.num_pages }}{% if pesquisa %}&pesquisa={{ pesquisa }}{% endif %}{% if preco_min %}&preco_min={{ preco_min }}{% endif %}{% if preco_max %}&preco_max={{ preco_max }}{% endif %}{% if categoria_id %}&categoria={{ categoria_id }}{% endif %}{% if tamanho_id %}&tamanho={{ tamanho_id }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}">Última &raquo;</a>
+                    {% endif %}
+            </div></div>
+        </div>
+        
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "principal/settings.html" %}
+{% load static %}
+
+{% block title %}Listar Pedidos{% endblock title %}
+
+{% block settings_content %}
+    <div class="form-row">
+        <a href="{% url "create_produto" %}" class="btn-primary">Novo produto</a>
+    </div>
+    <br>
+
+    <h2>Lista de Produtos</h2>
+    <br>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nome</th>
+                <th>Imagem</th>
+                <th>Preço</th>
+                <th>Estoque</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for produto in produtos %}
+            <tr>
+                <td><a href="{% url "detalhes_produto" produto.id %}">{{ produto.id }}</td></a>
+                <td>{{ produto.nome }}</td>
+                <td>
+                    <div class="imagem-container">
+                        {% if produto.imagem %}
+                            <img src="{{ produto.imagem.url }}" alt="{{ produto.nome }}" class="imagem-produto">
+                        {% else %}
+                            <img src="{% static "images/no-image.png" %}" alt="{{ produto.nome }}" class="imagem-produto">
+                        {% endif %}
+                    </div>
+                </td>
+                <td>{{ produto.preco }}</td>
+                <td>{{ produto.quantidade_em_estoque }}</td>
+                <td>
+                    <div class="d-flex justify-content-between" style="gap: 1rem;">
+                        <a href="{% url 'edit_produto' id=produto.id %}" class="btn btn-primary">Editar</a>
+                        <form method="POST" action="{% url 'delete_produto' produto.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background-color: #d45959;" class="btn btn-primary color-rednger" onclick="return confirm('Tem certeza que deseja deletar este produto?');">Deletar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5">Não há nenhum produto cadastrado</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</table>
+{% endblock settings_content %}

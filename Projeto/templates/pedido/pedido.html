@@ -1,0 +1,51 @@
+{% extends 'base/_base.html' %}
+{% load static %}
+
+{% block title %}Confirmação de compra{% endblock title %}
+
+{% block content %}
+    <div class="bg0 p-t-75 p-b-85">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+                    <div class="m-l-25 m-r--38 m-lr-0-xl">
+                        <h3 class="mtext-109 cl2 p-b-30">Pedido</h3>
+                        <p class="stext-101 cl2">Status: {{ pedido.status }}</p>
+                        
+                        <h4 class="mtext-101 cl2 p-b-20">Itens comprados: </h4>
+                        <ul class="p-l-28">
+                            {% for item in itens.all %}
+                                <li class="flex-w flex-t p-b-30">
+                                    <div class="column-1">
+                                        <div class="how-itemcart1">
+                                            {% if item.produto.imagem %}
+                                                <img src="{{ item.produto.imagem.url }}" alt="{{ item.produto.nome }}" class="imagem-produto">
+                                            {% else %}
+                                                <img src="{% static 'images/no-image.png' %}" alt="{{ item.produto.nome }}" class="imagem-produto">
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="column-2 p-l-30">
+                                        <h4 class="mtext-101 cl2">{{ item.produto.nome }}</h4>
+                                        <p class="stext-102 cl3">Descrição: {{ item.produto.descricao }}</p>
+                                        <p class="stext-102 cl3">Quantidade: {{ item.quantidade }}</p>
+                                        <p class="stext-102 cl3">Estampa: {{ item.estampa.nome }}</p>
+                                        <p class="stext-102 cl3">Tamanho: {{ item.tamanho.tamanho }}</p>
+                                        <br>
+                                        <p class="mtext-110 cl2">Preço: R$ {{ item.produto.preco|floatformat:2 }}</p>
+                                        <hr>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <h4 class="mtext-109 cl2 p-t-30">Total da Compra: R$ {{ pedido.preco_total|floatformat:2 }}</h4>
+                        <br>
+                        <div style="width: 100%;" class="text-center">
+                            <a href="{% url 'home' %}" class="stext-101 cl2 p-t-20 hov-cl1 trans-04">Voltar para a Página Inicial</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

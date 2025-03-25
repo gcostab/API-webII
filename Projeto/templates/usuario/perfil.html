@@ -1,0 +1,144 @@
+{% extends "base/_base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}Perfil{% endblock title %}
+
+{% block content %}
+<div class="container-product">
+    <div class="form-container">
+        <div class="d-flex justify-content-between">
+            <h2>Perfil do Usuário</h2> 
+            <form action="{% url "logout" %}" method="post" class="form-row icon-header-item">
+                {% csrf_token %}
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="{{ user|get_size_items }}">
+                    <a href="{% url "carrinho" id=user.id %}" class="hov-cl1 cl2" title="Meu carrinho">
+                        <i class="zmdi zmdi-shopping-cart"></i>
+                    </a>
+                </div>
+                <div class="icon-header-item cl2 hov-cl1 trans-04 js-show-cart">
+                    <a href="{% url "listar_pedidos" id=user.id %}" class="hov-cl1 cl2" title="Meus pedidos">
+                        <i class="zmdi zmdi-view-list"></i>
+                    </a>
+                </div>
+                {% if request.user.id == user.id %}
+                    <button type="submit" class="hov-cl1 cl2" title="Sair">
+                        <i class="zmdi zmdi-power"></i>
+                    </button>
+                {% endif %}
+            </form>
+        </div>
+        <hr>
+        {% if request.user.is_superuser %}
+            <div class="form-group">
+                <label class="stext-102 cl3">Tipo de usuário: </label>
+                <input type="text" disabled value="{{ user.tipo_cliente }}" class="form-control">
+            </div>
+        {% endif %}
+        
+        <form method="POST" action="{% url "edit_usuario" id=user.id %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group">
+                <label class="stext-102 cl3" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <p class="custom-class">
+                    {% if field.field.widget.input_type == "file" %}
+                        <div class="image-container">
+                            <hr>
+                            {% if user.imagem %}
+                                <div class="img-placeholder d-flex justify-content-center">
+                                    <img class="perfil image-default" id="image-preview" onerror="this.src='{% static "images/user-profile.jpg" %}'; this.style.display='block';" src="{{ user.imagem.url }}" alt="Imagem atual" />
+                                </div>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="imagem-clear" id="imagem-clear_id">
+                                    Limpar
+                                </label>
+                            {% else %}
+                                <div class="d-flex justify-content-center">
+                                    <img class="perfil image-default" id="image-preview" src="{% static "images/user-profile.jpg" %}" alt="Imagem preview" />
+                                </div>    
+                            {% endif %}
+                            <hr>
+                            <input type="file" name="imagem" class="form-control" accept="image/*" id="id_imagem">
+                            <p class="file-status">Nenhum arquivo escolhido</p>
+                        </div>
+                    {% else %}
+                        {% render_field field class="form-control" %}
+                    {% endif %}
+                </p>
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+            
+            <div class="form-row">
+                <input type="submit" id="confirm-btn" onclick="confirmarAlteracao()" class="btn-primary" value="Atualizar Perfil"/>
+                <a href="{% url "password_change" %}" class="btn-primary"/>Mudar a senha</a>
+            </div>
+        </form>
+
+        {% if user is not null and request.user.id != user.id %}
+            {% if request.user.is_superuser %}
+            <form id="mudar-tipo-form" action="{% url 'mudar_tipo' id=user.id %}" method="post">
+                <hr>
+                <br>
+                <h3>Admin: Mudar tipo de usuário </h3>
+                <br>
+                <div class="form-row">
+                    {% csrf_token %}
+                    <button type="submit" name="tipo" class="btn-primary ml-2" value="CLIENTE" onclick="confirmarAlteracao('CLIENTE')">Tornar em cliente comum</button>
+                    <button type="submit" name="tipo" class="btn-primary ml-2" value="ADMINISTRADOR" onclick="confirmarAlteracao('ADMINISTRADOR')">Tornar em um administrador</button>
+                    <button type="submit" name="tipo" class="btn-primary ml-2" value="CORPORATIVO" onclick="confirmarAlteracao('CORPORATIVO')">Tornar usuário em Corporativo</button>
+                </div>
+            </form>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .img-placeholder {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .image-container {
+        text-align: center;
+    }
+</style>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+    function confirmarAlteracao() {
+        return confirm('Tem certeza que deseja atualizar este perfil?');
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.querySelector('input[type="file"]');
+        const preview = document.getElementById('image-preview');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                
+                if (file) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = 'block';
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

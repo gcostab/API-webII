@@ -1,0 +1,63 @@
+{% extends "principal/settings.html" %} {% block title %}Listar Usuários
+{% endblock title %} {% block settings_content %}
+    <div class="form-row">
+        <a href="{% url "create_usuario" %}" class="btn-primary">Nova usuário</a>
+    </div>
+    <br>
+
+    <h2>Lista de Usuários</h2>
+    <br>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th colspan="2">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.username }}</td>
+                <td>{{ usuario.tipo_cliente }}</td>
+                <td>
+                    <form
+                        method="POST"
+                        action="{% url 'delete_usuario' usuario.id %}"
+                        style="display: inline"
+                    >
+                        {% csrf_token %}
+                        <div
+                            class="d-flex justify-content-between"
+                            style="gap: 1rem"
+                        >
+                            <button
+                                type="button"
+                                onclick="window.location='{% url 'perfil_usuario' usuario.id %}'"
+                                class="btn-primary"
+                            >
+                                Editar
+                            </button>
+                            <button
+                                type="submit"
+                                style="background-color: #d45959"
+                                class="btn-primary"
+                                onclick="return confirm('Tem certeza que deseja deletar este usuário?');"
+                            >
+                                Deletar
+                            </button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Não há nenhum usuário cadastrado</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock settings_content %}

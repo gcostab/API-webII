@@ -1,0 +1,49 @@
+{% extends "principal/settings.html" %}
+
+{% block title %}Listar Produtos{% endblock title %}
+
+{% block settings_content %}
+    <h2>Tipos de Produtos</h2>
+    <br>
+    
+    <hr>
+    <h4>Adicionar Novo Tipo de Produto</h4>
+    <br>
+    <form method="POST" action="{% url 'create_tipo_produto' %}">
+        {% csrf_token %}
+        {{ tipo_produto_form.as_p }}
+        <button type="submit" class="btn btn-primary">Cadastrar Novo Tipo</button>
+    </form>
+    <br>
+    <br>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Categoria</th>
+                <th colspan="2">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tipo in tipos_produtos %}
+                <tr>
+                    <td>{{ tipo.id }}</td>
+                    <td>{{ tipo.nome }}</td>
+                    <td>
+                        <form method="POST" action="{% url 'delete_tipo_produto' tipo.id %}" style="display:inline;">
+                            <div class="form-row">
+                            <button type="button" onclick="window.location='{% url 'edit_tipo_produto' tipo.id %}'" class="btn-primary ml-2">Editar</button>
+                            {% csrf_token %}
+                            <button type="submit" style="background-color: #d45959;" class="btn-primary ml-2" onclick="return confirm('Tem certeza que deseja deletar este tipo de produto?');">Deletar</button></div>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">Não há nenhum tipo de produto cadastrado</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock settings_content %}

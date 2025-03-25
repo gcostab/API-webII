@@ -1,0 +1,55 @@
+{% extends "principal/settings.html" %}
+{% load static %}
+
+{% block title %}Listar Estampas{% endblock title %}
+
+{% block settings_content %}
+    <div class="form-row">
+        <a href="{% url "create_estampa" %}" class="btn-primary">Nova estampa</a>
+    </div>
+    <br>
+    
+    <h2>Lista de Estampas</h2>
+    <br>
+    
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nome</th>
+                <th>Imagem</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estampa in estampas %}
+            <tr>
+                <td>{{ estampa.id }}</td>
+                <td>{{ estampa.nome }}</td>
+                <td>
+                    <div class="imagem-container">
+                        {% if estampa.imagem %}
+                            <img src="{{ estampa.imagem.url }}" alt="{{ estampa.nome }}" class="imagem-produto">
+                        {% else %}
+                            <img src="{% static "images/no-image.png" %}" alt="{{ estampa.nome }}" class="imagem-produto">
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    <div class="d-flex justify-content-between" style="gap: 1rem;">
+                        <a href="{% url 'edit_estampa' id=estampa.id %}" class="btn btn-primary">Editar</a>
+                        <form method="POST" action="{% url 'delete_estampa' estampa.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary color-red" onclick="return confirm('Tem certeza que deseja deletar esta estampa?');">Deletar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">Não há nenhuma estampa cadastrada</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>{{ nome_site }} - Formulário</title>
+    <link rel="icon" type="image/png" href="/static/images/icons/favicon.png"/>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/vendor/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/fonts/Linearicons-Free-v1.0.0/icon-font.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/vendor/animate/animate.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/vendor/css-hamburgers/hamburgers.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/vendor/animsition/css/animsition.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/vendor/select2/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/vendor/daterangepicker/daterangepicker.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/css/util.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login_static/css/main.css' %}">
+    
+</head>
+
+<body class="bg-gradient-primary">
+
+    <div class="limiter">
+        <div class="container-login100">
+            <div class="wrap-login100">
+                <form class="login100-form validate-form" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <span class="login100-form-title p-b-43">
+                        Formulário de cadastro
+                    </span>
+                    
+                    
+                    {% for field in form %}
+                        <div class="wrap-input100 validate-input" data-validate="{{ field.field.label }}">
+                            <input {% if field.name != "password1" and field.name != "password2" %}value="{{ field.value|default:"" }}"{% endif %} class="input100" {% if field.name == "password1" or field.name == "password2" %} type="password"{% else %} type="{{ field.type }}"{% endif %} name="{{ field.name }}" autocomplete="{{ field.autocomplete }}" {% if field.required %} required{% endif %} id="{{ field.id }}">
+                            <span class="focus-input100"></span>
+                            <span class="label-input100">{{ field.label }}</span>
+                        </div>
+                        {% if field.help_text %}
+                            <small class="form-text text-muted mr-4" style="margin-left: 30px;">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger mr-4" style="margin-left: 30px; color: red;">{{ error }}</div>
+                        {% endfor %}
+                        <br>
+                    {% endfor %}
+                    
+                    <div class="flex-sb-m w-full p-t-3 p-b-32">
+                        <div>
+                            <a href="{% url "password_reset" %}" class="txt1">
+                                Esqueceu a senha?
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="container-login100-form-btn">
+                        <button type="submit" class="login100-form-btn">
+                            Enviar
+                        </button>
+                    </div>
+                    
+                    <div class="text-center p-t-46 p-b-20">
+                        <a class="small" href="{% url "login" %}">Voltar</a>
+                    </div>
+                    <br>
+                    <div class="login100-form-social flex-c-m">
+						<a href="#" class="login100-form-social-item flex-c-m bg1 m-r-5">
+							<i class="fa fa-facebook-f" aria-hidden="true"></i>
+						</a>
+
+						<a href="#" class="login100-form-social-item flex-c-m bg2 m-r-5">
+							<i class="fa fa-twitter" aria-hidden="true"></i>
+						</a>
+					</div>
+                </form>
+				<div class="login100-more login-div-body">
+            </div>
+        </div>
+    </div>
+    <!-- Scripts -->
+    <script src="{% static 'login_static/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+    <script src="{% static 'login_static/vendor/animsition/js/animsition.min.js' %}"></script>
+    <script src="{% static 'login_static/vendor/bootstrap/js/popper.js' %}"></script>
+    <script src="{% static 'login_static/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'login_static/vendor/select2/select2.min.js' %}"></script>
+    <script src="{% static 'login_static/vendor/daterangepicker/moment.min.js' %}"></script>
+    <script src="{% static 'login_static/vendor/daterangepicker/daterangepicker.js' %}"></script>
+    <script src="{% static 'login_static/vendor/countdowntime/countdowntime.js' %}"></script>
+    <script src="{% static 'login_static/js/main.js' %}"></script>
+</body>
+
+</html>

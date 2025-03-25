@@ -1,0 +1,235 @@
+{% load static %}
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{ nome_site }} - {% block title %}{% endblock title %}</title>
+        
+        {% block head %}{% endblock head %}
+        
+        <link rel="icon" type="image/png" href="/static/images/icons/favicon.png"/>
+        <link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/fonts/iconic/css/material-design-iconic-font.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/fonts/linearicons-v1.0.0/icon-font.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/css-hamburgers/hamburgers.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/animsition/css/animsition.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/daterangepicker/daterangepicker.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/slick/slick.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/MagnificPopup/magnific-popup.css">
+        <link rel="stylesheet" type="text/css" href="/static/vendor/perfect-scrollbar/perfect-scrollbar.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/util.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    </head>
+	<nav class="container-menu-desktop fix-menu-desktop">
+		<div class="wrap-menu-desktop">
+			<div class="limiter-menu-desktop container">
+				
+				<!-- Logo desktop -->		
+				<a href="{% url "home" %}" class="logo">
+					<img src="{% static "images/icons/Logo.png" %}" alt="IMG-LOGO">
+				</a>
+
+				<!-- Menu desktop -->
+				<div class="menu-desktop">
+					<ul class="main-menu">
+						<li >
+							<a href="{% url "home" %}">Home</a></li>
+						</li>
+						{% if request.user.is_authenticated %}
+						{% else %}
+						<li>
+							<a href="{% url "login" %}">Faça login</a>
+						</li>
+						{% endif %}
+						{% if request.user.is_superuser %}
+						<li><a href="{% url 'settings' %}">Configurações</a></li>
+						{% endif %}
+						<li>
+							<a href="{% url "receber_suporte_corporativo" %}">Suporte Corporativo</a></li>
+						</li>
+					</ul>
+				</div>	
+
+				<!-- Icon header -->
+				<div class="wrap-icon-header flex-w flex-r-m">
+					<form action="{% url 'pesquisar_produto' %}" method="get" class="search-container">
+						<input type="text" name="pesquisa" id="pesquisa_input" class="search-input" value="{{ pesquisa|default:"" }}" placeholder="Pesquisar...">
+						<button type="submit" class="search-button" title="Pesquisar">🔍︎</button>
+					</form>
+
+					<a href="{% url "carrinho" %}">
+						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="{{ request.user|get_size_items }}">
+							<i class="zmdi zmdi-shopping-cart" title="Carrinho"></i>
+						</div>
+					</a>
+					<a href="{% url "perfil_usuario" %}" title="Perfil">
+						<div>
+							{% if request.user.imagem %}
+								<img src="{{ request.user.imagem.url }}" alt="perfil" style="border-radius: 50%; margin-left: 15px; width: 40px; height: 40px;">
+							{% else %}
+								<img src="/static/images/user-profile.jpg" alt="perfil" style="border-radius: 50%; margin-left: 15px; width: 40px; height: 40px;">
+							{% endif %}
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+    <body class="animsition" style="animation-duration: 1500ms; opacity: 1;">
+        
+        {% block content %}{% endblock content %}
+        <div
+            id="popup-container"
+            style="
+                position: fixed;
+                top: 90px;
+                right: 20px;
+                z-index: 1000;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            "
+        ></div>
+
+    </body>
+    
+	<footer class="bg3 p-t-1 p-b-32">
+		<div class="container" style="margin-top: 70px;">
+			<div class="row d-flex justify-content-around">
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Categorias
+					</h4>
+	
+					<ul>
+						{% for categoria in categorias %}
+							<li class="p-b-10">
+								<a href="{% url "pesquisar_produto" %}?categoria={{ categoria.id }}" class="stext-107 cl7 hov-cl1 trans-04">
+									{{ categoria.nome }}
+								</a>
+							</li>
+						{% endfor %}
+					</ul>
+				</div>
+	
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						ENTRE EM CONTATO
+					</h4>
+	
+					<p class="stext-107 cl7 size-201">
+						Tem alguma dúvida? Fale conosco na Indústria de Confecções Luni, Rua Ademiro, 123, São Paulo, SP ou ligue para (+55) 11 1234-5678
+					</p>
+	
+					<div class="p-t-27">
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-facebook"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-instagram"></i>
+						</a>
+	
+						<a href="#" class="fs-18 cl7 hov-cl1 trans-04 m-r-16">
+							<i class="fa fa-pinterest-p"></i>
+						</a>
+					</div>
+				</div>
+	
+				<div class="col-sm-6 col-lg-3 p-b-50">
+					<h4 class="stext-301 cl0 p-b-30">
+						Newsletter
+					</h4>
+	
+					<form>
+						<div class="wrap-input1 w-full p-b-4">
+							<input class="input1 bg-none plh1 stext-107 cl7" type="text" name="email" placeholder="support.luni@gmail.com">
+							<div class="focus-input1 trans-04"></div>
+						</div>
+	
+						<div class="p-t-18">
+							<button class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04">
+								Inscrever-se
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+	
+			<div class="p-t-40">
+				<p class="stext-107 cl6 txt-center">
+					&copy;<script>document.write(new Date().getFullYear());</script> Todos os direitos reservados | Feito com <i class="fa fa-heart-o" aria-hidden="true"></i> por <a href="https://colorlib.com" target="_blank">Colorlib</a> &amp; distribuído por <a href="https://themewagon.com" target="_blank">ThemeWagon</a>
+				</p>
+			</div>
+		</div>
+	</footer>
+	
+	
+	<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="/static/vendor/animsition/js/animsition.min.js"></script>
+	<script src="/static/js/main.js"></script>
+	
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			{% if messages %}
+			const messages = [
+				{% for message in messages %}
+				{
+					text: "{{ message.message }}",
+					type: "{{ message.tags }}"
+				},
+				{% endfor %}
+			];
+			
+			messages.forEach(function(message) {
+				showPopup(message.text, message.type);
+			});
+			{% endif %}
+		});
+		
+		function showPopup(message, type) {
+			const container = document.getElementById("popup-container");
+			
+			// Cria o elemento do popup
+			const popup = document.createElement("div");
+			popup.className = `popup ${type}`;
+			popup.textContent = message;
+			
+			// Adiciona um botão de fechar
+			const closeButton = document.createElement("button");
+			closeButton.innerHTML = "&times;";
+			closeButton.className = "close-btn";
+			closeButton.onclick = function() {
+				hidePopup(popup);
+			};
+			
+			popup.appendChild(closeButton);
+			container.appendChild(popup);
+			
+			// Exibe o popup com animação
+			setTimeout(function() {
+				popup.classList.add("show");
+			}, 10);
+			
+			// Remove o popup após 5 segundos com animação
+			setTimeout(function() {
+				hidePopup(popup);
+			}, 3000);
+		}
+		
+		function hidePopup(popup) {
+			popup.classList.remove("show");
+			popup.classList.add("hide");
+			setTimeout(function() {
+				popup.remove();
+			}, 500); // Tempo da animação de saída
+		}
+	</script>
+	{% block extra_js %}{% endblock extra_js %} 
+	</html>

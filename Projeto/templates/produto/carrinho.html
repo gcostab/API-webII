@@ -1,0 +1,178 @@
+{% extends "base/_base.html" %}
+{% load static %}
+
+{% block title %}Carrinho{% endblock title %}
+
+{% block content %}
+    <div class="wrap-header-cart js-panel-cart">
+        <div class="s-full js-hide-cart"></div>
+    </div>
+
+    <div class="bg0 p-t-75 p-b-85">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 col-xl-8 m-lr-auto m-b-50">
+                    <div class="m-l-25 m-r--38 m-lr-0-xl">
+                        <div class="wrap-table-shopping-cart">
+                            <form id="carrinho-form" method="post" action="{% url 'atualizar_carrinho' %}">
+                                {% csrf_token %}
+                                <table class="table-shopping-cart">
+                                    <thead>
+										<tr class="table_head">
+											<th class="column-1 text-center">Remover</th>
+                                            <th class="column-2 text-center"></th>
+                                            <th class="column-4 text-center">Estampa</th>
+                                            <th class="column-3 text-center">Tamanho</th>
+                                            <th class="column-5 text-center">Preço</th>
+                                            <th class="column-6 text-center">Total</th>
+                                            <th class="column-7 text-center">Quantidade</th>
+                                        </tr>
+									</thead>
+									<tbody id="carrinho-list">
+                                        {% for item_data in itens_carrinho %}
+                                            <tr data-id="{{ item_data.item.id }}" data-preco="{{ item_data.item.produto.preco }}" class="table_row">
+                                                <td class="column-1 text-center">
+                                                    <a href="{% url "rm_carrinho" item_data.item.produto.id %}">
+                                                        <div class="how-itemcart1">
+                                                            {% if item_data.item.produto.imagem %}
+                                                            <img src="{{ item_data.item.produto.imagem.url }}" alt="{{ item_data.item.produto.nome }}" class="imagem-produto">
+                                                            {% else %}
+                                                            <img src="{% static "images/no-image.png" %}" alt="{{ item_data.item.produto.nome }}" class="imagem-produto">
+                                                            {% endif %}
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                <td class="column-2 text-center">
+                                                    <a href="{% url "detalhes_produto" item_data.item.produto.id %}">
+                                                        {{ item_data.item.produto.nome }}
+                                                    </a>
+                                                </td>
+                                                <td class="column-3 text-center">
+                                                    {{ item_data.item.estampa.nome }}
+                                                </td>
+                                                <td class="column-4 text-center">
+                                                    {{ item_data.item.tamanho.tamanho }}
+                                                </td>
+                                                <td class="column-5 text-center preco">R$ {{ item_data.item.produto.preco }}</td>
+                                                <td class="column-6 text-center total-item">R$ {{ item_data.total_item|floatformat:2 }}</td>
+                                                <td class="column-7 text-center pl-4">
+                                                    <div class="wrap-num-product flex-w m-l-auto m-r-5">
+                                                        <div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+                                                            <i class="fs-16 zmdi zmdi-minus"></i>
+                                                        </div>
+
+                                                        <input class="mtext-104 cl3 txt-center num-product quantidade-input" type="number"  name="quantidade_{{ item_data.item.id }}" min="1" step="1" value="{{ item_data.item.quantidade }}">
+
+                                                        <div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+                                                            <i class="fs-16 zmdi zmdi-plus"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-10 col-lg-7 col-xl-4 m-lr-auto m-b-50">
+                    <div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+                        <h4 class="mtext-109 cl2 p-b-30">
+                            Total do Carrinho
+                        </h4>
+
+                        <div class="flex-w flex-t p-t-27 p-b-33">
+                            <div class="size-208">
+                                <span class="mtext-101 cl2">
+                                    Total:
+                                </span>
+                            </div>
+
+                            <div class="size-209 p-t-1">
+                                <span class="mtext-110 cl2 total-carrinho" id="total-carrinho">
+                                    R$ {{ total|floatformat:2 }}
+                                </span>
+                            </div>
+                        </div>
+							
+                            <button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer" type="button" id="finalizar-compra" onclick="finalizarCompra()">Finalizar Compra</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock content %}
+
+{% block extra_js %}
+<script>
+        function finalizarCompra() {
+            const form = document.getElementById('carrinho-form');
+            form.action = "{% url 'confirmar_compra' %}";
+            form.method = "get";
+            form.submit();
+        }
+		document.addEventListener('DOMContentLoaded', function() {
+			window.addEventListener('pageshow', function(event) {
+				if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+					atualizarTotais();
+                    console.log('O usuário voltou à página.');
+                } else {
+					console.log('A página foi carregada normalmente.');
+                }
+            });
+			
+			const form = document.getElementById('carrinho-form');
+            const totalCarrinhoElement = document.getElementById('total-carrinho');
+            const subtotalCarrinhoElement = document.getElementById('subtotal-carrinho');
+            const finalizarCompraButton = document.getElementById('finalizar-compra');
+			
+            function atualizarTotais() {
+				let totalCarrinho = 0;
+                const itens = document.querySelectorAll('#carrinho-list > tr');
+				
+				itens.forEach(item => {
+					const preco = parseFloat(item.dataset.preco.replace(',', '.'));
+                    const quantidadeInput = item.querySelector('.quantidade-input');
+                    const quantidade = parseInt(quantidadeInput.value, 10);
+                    const totalItem = preco * quantidade;
+					
+                    item.querySelector('.total-item').textContent = 'R$ ' + totalItem.toFixed(2);
+
+                    totalCarrinho += totalItem;
+                });
+				
+                totalCarrinhoElement.textContent = 'R$ ' + totalCarrinho.toFixed(2);
+                subtotalCarrinhoElement.textContent = 'R$ ' + totalCarrinho.toFixed(2);
+				
+                finalizarCompraButton.disabled = false;
+            }
+			
+            // Adiciona comportamento aos botões de diminuir e aumentar quantidade
+            document.querySelectorAll('.btn-num-product-down').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.nextElementSibling;
+                    let numProduct = Number(input.value);
+                    if (numProduct > 1) { // Altere para 1 para garantir que a quantidade não vá abaixo de 1
+                        input.value = numProduct - 1;
+                        atualizarTotais();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-num-product-up').forEach(button => {
+                button.addEventListener('click', function() {
+                    const input = this.previousElementSibling;
+                    let numProduct = Number(input.value);
+                    input.value = numProduct + 1;
+                    atualizarTotais();
+                });
+            });
+
+            // Atualiza totais inicialmente
+            atualizarTotais();
+        });
+		atualizarTotais();
+    </script>
+{% endblock extra_js %}

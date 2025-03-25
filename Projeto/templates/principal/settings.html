@@ -1,0 +1,29 @@
+{% extends "base/_base.html" %}
+
+{% block title %}Listar Produtos{% endblock title %}
+
+{% block content %}
+    <div class="container-product">
+        <div class="form-container">
+            {% if request.user.is_superuser %}
+                <hr>
+                <div class="form-row justify-content-center">
+                    <li><a href="{% url 'listar_usuarios' %}">Usuários</a></li> | 
+                    <li><a href="{% url 'listar_produtos' %}">Produtos</a></li> | 
+                    <li><a href="{% url 'listar_tipo_produtos' %}">Categorias</a></li> | 
+                    <li><a href="{% url 'listar_estampas' %}">Estampas</a></li> | 
+                    <li><a href="{% url 'listar_pedidos' %}">Pedidos</a></li> | 
+                    <li><a href="{% url 'settings' %}">Configurações</a></li>
+                </div>
+            {% endif %}
+            <hr>
+            {% block settings_content %}
+            <p>
+                Esta página está disponível apenas para admininstradores e exibe uma lista de links para acessar diferentes seções do sistema. 
+                Aqui você pode encontrar links para visualizar e gerenciar usuários, produtos, tipos de produtos, estampas e pedidos. 
+                Utilize os links acima para navegar rapidamente entre essas seções.
+            </p>
+            {% endblock settings_content %}
+        </div>
+    </div>
+{% endblock content %}
